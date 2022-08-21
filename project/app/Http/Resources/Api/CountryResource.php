@@ -14,10 +14,22 @@ class CountryResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'status' => 'ok',
-            'country' => $this->title,
-            'cities' => $this->city
-        ];
+        if(isset($this->title)) {
+
+            $resourse = [
+                'status' => 'ok',
+                'id' => $this->id,
+                'country' => $this->title,
+                'cities' => $this->city
+            ];
+
+        } else {
+
+            $resourse = [
+                'status' => $this['status']
+            ];
+        }
+
+        return $resourse;
     }
 }
