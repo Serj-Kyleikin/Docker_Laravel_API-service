@@ -2,6 +2,6 @@
 
 cd laravel
 
-php artisan route:clear
-php artisan config:clear
-php artisan cache:clear 
+docker exec -it app php artisan route:clear
+docker exec -it app php artisan config:clear
+docker exec -it app php artisan cache:clear
