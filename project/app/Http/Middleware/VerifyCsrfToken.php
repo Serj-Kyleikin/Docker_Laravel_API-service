@@ -12,9 +12,12 @@ class VerifyCsrfToken extends Middleware
      * @var array<int, string>
      */
     protected $except = [
-        '/api/country/create',
-        '/api/city/create',
-        '/api/country/*',
-        '/api/city/*'
+
+        // For Postman tests
+
+        // '/api/country/create',
+        // '/api/city/create',
+        // '/api/country/*',
+        // '/api/city/*'
     ];
 }
