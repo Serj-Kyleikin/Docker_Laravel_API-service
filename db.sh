@@ -1,3 +1,4 @@
  #!/bin/bash
 
-docker exec -it app php laravel/artisan migrate --seed
+cd laravel
+docker exec -it app php artisan migrate --seed
