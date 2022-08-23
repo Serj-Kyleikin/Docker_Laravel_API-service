@@ -9,31 +9,36 @@ use App\Http\Resources\Api\CityResource;
 
 class CityController extends ApiController
 {
-    public function show(City $entity)
+    public function index()
     {
-        return new CityResource($entity);
+        return new CityResource(['code' => 204]);
     }
 
-    public function add(CityRequest $request)
+    public function store(CityRequest $request)
     {
         $data = $request->validated();
         $response = $this->service->addCity($data);
 
-        $status = ($response) ? ['status' => 'created'] : ['status' => 'dublicate city'];
+        $status = ($response) ? ['code' => 201] : ['code' => 422];
         return new CityResource($status);
     }
 
-    public function update(UpdateCityRequest $request, City $entity) 
+    public function show(City $city)
+    {
+        return new CityResource($city);
+    }
+
+    public function update(UpdateCityRequest $request, City $city)
     {
         $data = $request->validated();
-        $response = $this->service ->updateCity($entity, $data);
+        $this->service ->updateCity($city, $data);
 
-        return new CityResource(['status' => 'update']);
+        return new CityResource(['code' => 204]);
     }
 
-    public function remove(City $entity) 
+    public function destroy(City $city)
     {
-        $entity->delete();
-        return new CityResource(['status' => 'deleted']);
+        $city->delete();
+        return new CityResource(['code' => 204]);
     }
-} 
+}

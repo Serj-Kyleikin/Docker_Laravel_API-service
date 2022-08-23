@@ -11,10 +11,9 @@ use App\Http\Resources\Api\CountryResource;
 
 class CountryController extends ApiController
 {
+
     public function index(FilterRequest $request)
     {
-        // Фильтрация get-параметров
-
         $page = $data['page'] ?? 1;
         $perPage = $data['per_page'] ?? 5;
 
@@ -26,32 +25,32 @@ class CountryController extends ApiController
         return CountryResource::collection($countries);
     }
 
-    public function show(Country $entity)
-    {
-        return new CountryResource($entity);
-    }
-
-    public function add(CountryRequest $request)
+    public function store(CountryRequest $request)
     {
         $data = $request->validated();
         $response = $this->service->addCountry($data);
 
-        $status = ($response) ? ['status' => 'created'] : ['status' => 'dublicate country'];
+        $status = ($response) ? ['code' => 201] : ['code' => 422];
         return new CountryResource($status);
     }
 
-    public function update(UpdateCountryRequest $request, Country $entity) 
+    public function show(Country $country)
+    {
+        return new CountryResource($country);
+    }
+
+    public function update(UpdateCountryRequest $request, Country $country)
     {
         $data = $request->validated();
-        $response = $this->service ->updateCountry($entity, $data);
+        $response = $this->service->updateCountry($country, $data);
 
-        $status = ($response) ? ['status' => 'dublicate country'] : ['status' => 'update'];
+        $status = ($response) ? ['code' => 204] : ['code' => 422];
         return new CountryResource($status);
     }
 
-    public function remove(Country $entity) 
+    public function destroy(Country $country)
     {
-        $entity->delete();
-        return new CountryResource(['status' => 'deleted']);;
+        $country->delete();
+        return new CountryResource(['code' => 204]);
     }
 }

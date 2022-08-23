@@ -26,7 +26,7 @@ class CountryResource extends JsonResource
         } else {
 
             $resourse = [
-                'status' => $this['status']
+                'code' => $this['code']
             ];
         }
 

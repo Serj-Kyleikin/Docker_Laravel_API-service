@@ -9,6 +9,7 @@ use App\Models\CountryCity;
 class Service {
 
     public $country;
+    public $status = false;
 
     public function addCountry($data) {
 
@@ -49,8 +50,10 @@ class Service {
 
         Country::where('title', $data['title'])->firstOr(function () use ($entity, $data) {
             $entity->update($data);
-            return $entity->fresh();
+            $this->status = true;
         });
+
+        return $this->status;
     }
 
     public function addCity($data) {
@@ -73,7 +76,7 @@ class Service {
                 CountryCity::create($add);
             }
 
-            return $city;
+            return 1;
 
         } else return 0;
     }
@@ -114,7 +117,5 @@ class Service {
 
             } else CountryCity::where('city_id', $entity->id)->delete();
         }
-
-        return $entity->fresh();
     }
 }
