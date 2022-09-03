@@ -31,7 +31,7 @@ class CountryController extends ApiController
         $response = $this->service->addCountry($data);
 
         $status = ($response) ? ['code' => 201] : ['code' => 422];
-        return new CountryResource($status);
+        return (new CountryResource($status))->response()->setStatusCode($status['code']);
     }
 
     public function show(Country $country)
@@ -45,12 +45,12 @@ class CountryController extends ApiController
         $response = $this->service->updateCountry($country, $data);
 
         $status = ($response) ? ['code' => 204] : ['code' => 422];
-        return new CountryResource($status);
+        return (new CountryResource($status))->response()->setStatusCode($status['code']);
     }
 
     public function destroy(Country $country)
     {
         $country->delete();
-        return new CountryResource(['code' => 204]);
+        return (new CountryResource(['code' => 204]))->response()->setStatusCode(204);
     }
 }

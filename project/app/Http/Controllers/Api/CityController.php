@@ -20,7 +20,7 @@ class CityController extends ApiController
         $response = $this->service->addCity($data);
 
         $status = ($response) ? ['code' => 201] : ['code' => 422];
-        return new CityResource($status);
+        return (new CityResource($status))->response()->setStatusCode($status['code']);
     }
 
     public function show(City $city)
@@ -33,12 +33,12 @@ class CityController extends ApiController
         $data = $request->validated();
         $this->service ->updateCity($city, $data);
 
-        return new CityResource(['code' => 204]);
+        return (new CityResource(['code' => 204]))->response()->setStatusCode(204);
     }
 
     public function destroy(City $city)
     {
         $city->delete();
-        return new CityResource(['code' => 204]);
+        return (new CityResource(['code' => 204]))->response()->setStatusCode(204);
     }
 }
