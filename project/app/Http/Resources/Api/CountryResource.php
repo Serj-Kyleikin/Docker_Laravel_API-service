@@ -6,6 +6,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CountryResource extends JsonResource
 {
+    public static $wrap = null;
+    
     /**
      * Transform the resource into an array.
      *
@@ -17,18 +19,27 @@ class CountryResource extends JsonResource
         if(isset($this->title)) {
 
             $resourse = [
-                'status' => 'ok',
+                'status' => true,
                 'id' => $this->id,
                 'country' => $this->title,
                 'cities' => $this->city
             ];
 
-        } else {
+        } elseif($this['code'] == 422) {
 
             $resourse = [
-                'code' => $this['code']
+                'status' => false,
+                'message' => $this['message']
             ];
-        }
+
+        } elseif($this['code'] == 201) {
+
+            $resourse = [
+                'status' => true,
+                'id' => $this['id']
+            ];
+
+        } else $resourse = '';
 
         return $resourse;
     }
