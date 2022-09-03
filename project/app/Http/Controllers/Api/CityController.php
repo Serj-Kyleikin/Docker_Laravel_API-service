@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\City;
 use App\Http\Requests\Api\CityRequest;
 use App\Http\Requests\Api\UpdateCityRequest;
@@ -9,9 +10,13 @@ use App\Http\Resources\Api\CityResource;
 
 class CityController extends ApiController
 {
+    public $messages = [
+        'The service is not available'
+    ];
+
     public function index()
     {
-        return new CityResource(['code' => 204]);
+        return response()->json('', 204);
     }
 
     public function store(CityRequest $request)
@@ -19,8 +24,7 @@ class CityController extends ApiController
         $data = $request->validated();
         $response = $this->service->addCity($data);
 
-        $status = ($response) ? ['code' => 201] : ['code' => 422];
-        return (new CityResource($status))->response()->setStatusCode($status['code']);
+        return (new CityResource($response))->response()->setStatusCode($response['code']);
     }
 
     public function show(City $city)
@@ -31,14 +35,26 @@ class CityController extends ApiController
     public function update(UpdateCityRequest $request, City $city)
     {
         $data = $request->validated();
-        $this->service ->updateCity($city, $data);
+        $response = $this->service->updateCity($city, $data);
 
-        return (new CityResource(['code' => 204]))->response()->setStatusCode(204);
+        return (new CityResource($response))->response()->setStatusCode($response['code']);
     }
 
     public function destroy(City $city)
     {
-        $city->delete();
-        return (new CityResource(['code' => 204]))->response()->setStatusCode(204);
+        DB::beginTransaction();
+
+        try {
+
+            $city->delete();
+            DB::commit();
+
+            return response()->json('', 204);
+
+        } catch(\Exception $exception) {
+
+            DB::rollback();
+            return response()->json(["message" => $this->messages[0]], 503);
+        }
     }
 }

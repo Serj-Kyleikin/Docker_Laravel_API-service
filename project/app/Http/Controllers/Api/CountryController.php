@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Country;
 use App\Http\Filters\ApiFilter;
 use App\Http\Requests\Api\FilterRequest;
@@ -11,6 +12,9 @@ use App\Http\Resources\Api\CountryResource;
 
 class CountryController extends ApiController
 {
+    public $messages = [
+        'The service is not available'
+    ];
 
     public function index(FilterRequest $request)
     {
@@ -30,8 +34,7 @@ class CountryController extends ApiController
         $data = $request->validated();
         $response = $this->service->addCountry($data);
 
-        $status = ($response) ? ['code' => 201] : ['code' => 422];
-        return (new CountryResource($status))->response()->setStatusCode($status['code']);
+        return (new CountryResource($response))->response()->setStatusCode($response['code']);
     }
 
     public function show(Country $country)
@@ -44,13 +47,24 @@ class CountryController extends ApiController
         $data = $request->validated();
         $response = $this->service->updateCountry($country, $data);
 
-        $status = ($response) ? ['code' => 204] : ['code' => 422];
-        return (new CountryResource($status))->response()->setStatusCode($status['code']);
+        return (new CountryResource($response))->response()->setStatusCode($response['code']);
     }
 
     public function destroy(Country $country)
     {
-        $country->delete();
-        return (new CountryResource(['code' => 204]))->response()->setStatusCode(204);
+        DB::beginTransaction();
+
+        try {
+
+            $country->delete();
+            DB::commit();
+
+            return response()->json('', 204);
+
+        } catch(\Exception $exception) {
+
+            DB::rollback();
+            return response()->json(["message" => $this->messages[0]], 503);
+        }
     }
 }
